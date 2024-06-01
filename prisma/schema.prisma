@@ -1,0 +1,52 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model Employee {
+  Employee_id     String    @id
+  Employee_Nom    String
+  Employee_Prenom String
+  date_creation   DateTime  @default(now())
+  Tickets         Ticket[]
+  Problems        Problem[]
+}
+
+model Ticket {
+  Ticket_id              String     @id
+  User_id                String
+  Description            String
+  Reclamation_Status     TaskStatus
+  date_creation          DateTime   @default(now())
+  date_Update_Status     DateTime?
+  Notification           Boolean    @default(false)
+  date_Notification_Send DateTime?
+  Project_Name           String
+  Employee               Employee   @relation(fields: [User_id], references: [Employee_id], onDelete: Cascade)
+}
+
+model Problem {
+  Problem_id             String     @id
+  User_id                String
+  Description            String
+  Reclamation_Status     TaskStatus
+  date_creation          DateTime   @default(now())
+  date_Update_Status     DateTime?
+  Notification           Boolean    @default(false)
+  date_Notification_Send DateTime?
+  Project_Name           String
+  Employee               Employee   @relation(fields: [User_id], references: [Employee_id], onDelete: Cascade)
+}
+
+enum TaskStatus {
+  NOT_RESOLVED
+  IN_PROGRESS
+  RESOLVED
+}
