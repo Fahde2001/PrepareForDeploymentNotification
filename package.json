@@ -66,6 +66,7 @@
     "testEnvironment": "node"
   },
   "scripts": {
+    "postinstall": "npx prisma generate",
     "start:offline": "serverless offline",
     "build": "tsc -p tsconfig.build.json",
     "start": "node dist/main",
