@@ -72,5 +72,16 @@
     ],
     "coverageDirectory": "../coverage",
     "testEnvironment": "node"
+<<<<<<< HEAD
+=======
+  },
+  "scripts": {
+    "postinstall": "npx prisma generate",
+    "start:offline": "serverless offline",
+    "build": "tsc -p tsconfig.build.json",
+    "start": "node dist/main",
+    "start:dev": "nest start --watch",
+    "start:prod": "node dist/main"
+>>>>>>> f2c1c9bc0e51d5f7c2b543c9864ba9804348223e
   }
 }
