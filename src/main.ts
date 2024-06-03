@@ -1,27 +1,24 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
-import { Handler, Context } from 'aws-lambda';
-import { createServer, proxy } from 'aws-serverless-express';
-import { ExpressAdapter } from '@nestjs/platform-express';
-import * as express from 'express';
+import { VercelRequest, VercelResponse } from '@vercel/node';
 
-let cachedServer;
+let cachedApp;
 
-async function bootstrapServer() {
-  const expressApp = express();
-  const app = await NestFactory.create(AppModule, new ExpressAdapter(expressApp));
+async function bootstrapApp() {
+  const app = await NestFactory.create(AppModule);
   app.enableCors();
   await app.init();
-  return createServer(expressApp);
+  return app;
 }
 
-export const handler: Handler = async (event: any, context: Context) => {
-  console.log('Event: ', event);
-  console.log('Context: ', context);
-  if (!cachedServer) {
-    cachedServer = await bootstrapServer();
+export default async function handler(req: VercelRequest, res: VercelResponse) {
+  try {
+    if (!cachedApp) {
+      cachedApp = await bootstrapApp();
+    }
+    await cachedApp.getHttpAdapter().getInstance().handle(req, res);
+  } catch (error) {
+    console.error('Server Error:', error);
+    res.status(500).send('Internal Server Error');
   }
-  const result = proxy(cachedServer, event, context, 'PROMISE');
-  console.log('Result: ', result);
-  return result.promise;
-};
+}
